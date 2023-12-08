@@ -5,6 +5,12 @@ module.exports = {
         protocol: 'https',
         hostname: 'images.pexels.com',
         pathname: '**',
-      }],
+      },
+      {
+        protocol: 'https',
+        hostname: 'demo.vercel.store',
+        pathname: '**',
+      }
+    ],
     },
   };

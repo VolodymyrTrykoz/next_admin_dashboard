@@ -71,7 +71,7 @@ const Transactions = () => {
         <tbody>
           {
             transactionsList.map((transaction) => (
-              <tr>
+              <tr key={transaction.name}>
                 <td className="flex gap-2 items-center"><Image className="rounded-[50%]" src={transaction.image} alt='' width={40} height={40}/>{transaction.name}</td>
                 <td>
                   <span className={`${renderStatusBg(`${transaction.status}`)} inline-block px-2 py-1 rounded-lg`}>

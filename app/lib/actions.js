@@ -1,137 +1,166 @@
+"use server";
 
-import { User, Product } from './models';
-import {connectToDB} from './utils';
-import {revalidatePath} from 'next/cache';
-import {redirect} from 'next/navigation';
+import { revalidatePath } from "next/cache";
+import { Product, User } from "./models";
+import { connectToDB } from "./utils";
+import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
-import { signIn } from '../auth';
+import { signIn } from "../auth";
 
-export const addUserData = async (formData) => {
-    "use server";
-    const {username, email, password, phone, isAdmin, isActive, address} = Object.fromEntries(formData);
-    try {
-        await connectToDB();
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
- 
-        const newUser = new User({
-            username,
-            email,
-            password: hashedPassword,
-            phone,
-            isAdmin,
-            isActive, 
-            address
-        })
+export const addUser = async (formData) => {
+  const { username, email, password, phone, address, isAdmin, isActive } =
+    Object.fromEntries(formData);
 
-        await newUser.save();
+  try {
+    connectToDB();
 
-    }
-    catch(err){
-        throw new Error ('Failed to create a new user' + err.message)
-    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    revalidatePath("/dashboard/users");
-    redirect("/dashboard/users");
-}
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+      phone,
+      address,
+      isAdmin,
+      isActive,
+    });
 
-export const addProductData = async (formData) => {
-    "use server";
+    await newUser.save();
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to create user!");
+  }
 
-    const {title, cat, price, stock, color, size, desc} = Object.fromEntries(formData);
+  revalidatePath("/dashboard/users");
+  redirect("/dashboard/users");
+};
 
-    try {
-        await connectToDB();
+export const updateUser = async (formData) => {
+  const { id, username, email, password, phone, address, isAdmin, isActive } =
+    Object.fromEntries(formData);
 
-        const newProduct = new Product({
-            title, cat, price, stock, color, size, desc
-        })
+  try {
+    connectToDB();
 
-       await newProduct.save();
+    const updateFields = {
+      username,
+      email,
+      password,
+      phone,
+      address,
+      isAdmin,
+      isActive,
+    };
 
-
-    } catch (err) {
-        throw new Error ('Failed to create a new product' + err.message);
-    }
-
-    revalidatePath("/dashboard/products");
-    redirect("/dashboard/products");
-  
-}
-
-export const deleteUserById = async (formData) => {
-    'use server';
-    const {id} = Object.fromEntries(formData);
-    try{
-        connectToDB();
-        await User.findByIdAndDelete(id);
-    }
-    catch(err){
-        throw new Error('Cannot delete a user' + err.message);
-    }
-    revalidatePath("/dashboard/users");
-}
-
-export const deleteProductById = async(formData) => {
-    'use server';
-    const {id} = Object.fromEntries(formData);
-    try{
-        connectToDB();
-        await Product.findByIdAndDelete(id)
-    }
-    catch(err){
-        throw new Error('Cannot delete product by id' + err.message)
-    }
-    revalidatePath("/dashboard/products");
-}
-
-export const updateProductById = async(formData) => {
-    'use server';
-    const {id, ...data} = Object.fromEntries(formData);
-
-    const updatedData = Object.fromEntries(
-        Object.entries(data).filter(([key, value]) => value !== '' || value === null)
+    Object.keys(updateFields).forEach(
+      (key) =>
+        (updateFields[key] === "" || undefined) && delete updateFields[key]
     );
 
-    try{
-        await connectToDB();
-        await Product.findByIdAndUpdate(id, updatedData);
-    } catch(err){
-        throw new Error('Cannot update product' + err.message)
-    }
+    await User.findByIdAndUpdate(id, updateFields);
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to update user!");
+  }
 
-    revalidatePath(`/dashboard/products/${id}`);
-    redirect('/dashboard/products/');
+  revalidatePath("/dashboard/users");
+  redirect("/dashboard/users");
+};
 
-}
+export const addProduct = async (formData) => {
+  const { title, desc, price, stock, color, size } =
+    Object.fromEntries(formData);
 
-export const updateUserById = async(formData) => {
-    'use server';
-    const {id, ...data} = Object.fromEntries(formData);
+  try {
+    connectToDB();
 
-    const updatedData = Object.fromEntries(
-        Object.entries(data).filter(([key, value]) => value !== '' || value === null)
+    const newProduct = new Product({
+      title,
+      desc,
+      price,
+      stock,
+      color,
+      size,
+    });
+
+    await newProduct.save();
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to create product!");
+  }
+
+  revalidatePath("/dashboard/products");
+  redirect("/dashboard/products");
+};
+
+export const updateProduct = async (formData) => {
+  const { id, title, desc, price, stock, color, size } =
+    Object.fromEntries(formData);
+
+  try {
+    connectToDB();
+
+    const updateFields = {
+      title,
+      desc,
+      price,
+      stock,
+      color,
+      size,
+    };
+
+    Object.keys(updateFields).forEach(
+      (key) =>
+        (updateFields[key] === "" || undefined) && delete updateFields[key]
     );
 
-    try{
-        await connectToDB();
-        await User.findByIdAndUpdate(id, updatedData);
-    } catch(err){
-        throw new Error('Cannot update user' + err.message)
-    }
+    await Product.findByIdAndUpdate(id, updateFields);
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to update product!");
+  }
 
-    revalidatePath(`/dashboard/users/${id}`);
-    redirect('/dashboard/users/');
+  revalidatePath("/dashboard/products");
+  redirect("/dashboard/products");
+};
 
-}
+export const deleteUser = async (formData) => {
+  const { id } = Object.fromEntries(formData);
 
-export const authenticate = async (formData) => {
-    'use server'
-    const {username, password} = Object.fromEntries(formData);
- 
-    try {
-      await signIn("credentials", { username, password });
-    } catch (err) {
-      return "Wrong Credentials!";
-    }
-  };
+  try {
+    connectToDB();
+    await User.findByIdAndDelete(id);
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to delete user!");
+  }
+
+  revalidatePath("/dashboard/products");
+};
+
+export const deleteProduct = async (formData) => {
+  const { id } = Object.fromEntries(formData);
+
+  try {
+    connectToDB();
+    await Product.findByIdAndDelete(id);
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to delete product!");
+  }
+
+  revalidatePath("/dashboard/products");
+};
+
+export const authenticate = async (prevState, formData) => {
+  const { username, password } = Object.fromEntries(formData);
+
+  try {
+    await signIn("credentials", { username, password });
+  } catch (err) {
+    console.log('signIn authenticate issue', err)
+    return "Wrong Credentials!";
+  }
+};
