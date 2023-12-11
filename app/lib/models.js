@@ -1,73 +1,78 @@
-import { Schema, model, models } from 'mongoose';
+import mongoose from "mongoose";
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema(
+  {
     username: {
-        type: String,
-        required: [true, 'Username is required!'],
-        match: [/^(?=.{2,10}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/, "Username invalid, it should contain 2-10 alphanumeric letters and be unique!"]
-        },
+      type: String,
+      required: true,
+      unique: true,
+      min: 3,
+      max: 20,
+    },
     email: {
-        type: String,
-        unique: [true, 'Email already exists!'],
-        required: [true, 'Email is required!'],
+      type: String,
+      required: true,
+      unique: true,
     },
     password: {
-        type: String,
-        required: [true, 'Password is required!'],
+      type: String,
+      required: true,
     },
     img: {
-        type: String,
-    },
-    phone: {
-        type: String,
+      type: String,
     },
     isAdmin: {
-        type: Boolean,
-        default: false,
+      type: Boolean,
+      default: false,
     },
     isActive: {
-        type: Boolean,
-        default: true,
+      type: Boolean,
+      default: true,
+    },
+    phone: {
+      type: String,
     },
     address: {
-        type: String,
+      type: String,
     },
-}, {timestamps: true});
+  },
+  { timestamps: true }
+);
 
-const productSchema = new Schema({
+const productSchema = new mongoose.Schema(
+  {
     title: {
-        type: String,
-        required: [true, 'Title is required!'],
-        },
-    title: {
-        type: String,
-        required: [true, 'Category is required'],
+      type: String,
+      required: true,
+      unique: true,
     },
     desc: {
-        type: String,
-        required: [true, 'Description is required!'],
+      type: String,
+      required: true,
     },
     price: {
-        type: Number,
-        required: [true, 'Price is required!'],
-        min: [0, 'Cannot be less than 0'],
+      type: Number,
+      required: true,
+      min: 0,
     },
     stock: {
-        type: Number,
-        required: [true, 'Price is required!'],
-        min: [0, 'Cannot be less than 0'],
+      type: Number,
+      required: true,
+      min: 0,
     },
     img: {
-        type: String,
+      type: String,
     },
     color: {
-        type: String,
+      type: String,
     },
     size: {
-        type: String,
+      type: String,
     },
-}, {timestamps: true});
+  },
+  { timestamps: true }
+);
 
-export const User = models.User || model("User", userSchema);
-export const Product = models.Product || model("Product", productSchema);
-
+export const User = mongoose.models.User || mongoose.model("User", userSchema);
+export const Product =
+  mongoose.models.Product || mongoose.model("Product", productSchema);

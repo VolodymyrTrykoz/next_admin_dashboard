@@ -1,11 +1,11 @@
 import {Product, User} from './models';
 import {connectToDB} from './utils';
-import {ITEMS_PER_PAGE} from '@/app/utils/constants';
+
 
 export const fetchUsers = async(q, page) => {
     const regex = new RegExp(q, 'i');
     try {
-        await connectToDB();
+        connectToDB();
         const count = await User.find({username: {$regex: regex}}).count();
         const users = await User.find({username: {$regex: regex}})
 
@@ -19,7 +19,7 @@ export const fetchUsers = async(q, page) => {
 
 export const fetchUserById = async (userId) => {
     try {
-        await connectToDB();
+        connectToDB();
         const user = await User.findById(userId);
         if (!user) {
             throw new Error('User not found');
@@ -34,7 +34,7 @@ export const fetchUserById = async (userId) => {
 export const fetchProducts = async(q, page) => {
     const regex = new RegExp(q, 'i');
     try {
-        await connectToDB();
+        connectToDB();
         const count = await Product.find({title: {$regex: regex}}).count();
         const products = await Product.find({title: {$regex: regex}})
 
@@ -48,7 +48,7 @@ export const fetchProducts = async(q, page) => {
 
 export const fetchProductById = async (productId) => {
     try {
-        await connectToDB();
+        connectToDB();
         const product = await Product.findById(productId);
         if (!product) {
             throw new Error('Product not found');

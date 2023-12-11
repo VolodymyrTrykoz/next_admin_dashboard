@@ -10,9 +10,8 @@ const login = async (credentials) => {
     connectToDB();
     const user = await User.findOne({ username: credentials.username });
 
-    if (!user) throw new Error("Wrong username!");
+    if (!user || !user.isAdmin) throw new Error("User is not admin!");
 
- 
     const isPasswordCorrect = await bcrypt.compare(
       credentials.password,
       user.password
@@ -45,6 +44,7 @@ export const { signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        console.log("jwt user", user);
         token.username = user.username;
         token.img = user.img;
       }

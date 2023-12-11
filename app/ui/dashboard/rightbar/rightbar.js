@@ -29,7 +29,7 @@ const Rightbar = () => {
     <div className="fixed">
       {
         cardsList.map(({icon, notification, title, subtitle, descr, withBgImg, btnIcon, btnText}) => (
-          <div className="bg-gradient-to-t from-[#182237] to-[#253352] p-5 md:p-6 rounded-lg mb-5 relative">
+          <div key={title} className="bg-gradient-to-t from-[#182237] to-[#253352] p-5 md:p-6 rounded-lg mb-5 relative">
             {
               withBgImg && (
                 <div className='absolute right-0 bottom-0 w-1/2 h-1/2'>

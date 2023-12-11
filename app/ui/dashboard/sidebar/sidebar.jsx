@@ -25,7 +25,7 @@ const menuItems = [
       },
       {
         title: "Users",
-        path: "/dashboard/users?page=1",
+        path: "/dashboard/users",
         icon: <MdSupervisedUserCircle />,
       },
       {
@@ -34,8 +34,8 @@ const menuItems = [
         icon: <MdShoppingBag />,
       },
       {
-        title: "Transactions",
-        path: "/dashboard/transactions",
+        title: "T-shirts",
+        path: "/dashboard/t-shirts?color=blue&size=m",
         icon: <MdAttachMoney />,
       },
     ],
