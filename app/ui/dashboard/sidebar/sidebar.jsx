@@ -77,14 +77,18 @@ const menuItems = [
   },
 ];
 
-const Sidebar = () => {
+const Sidebar = async () => {
+  const {user} = await auth();
+
+  const {username, email, img} = user;
+
   return (
     <div className="sticky top-10">
       <div className="flex items-center gap-5 mb-5">
-        <Image className="rounded-full object-cover" src='/noavatar.png' alt='' width={50} height={50}/>
+        <Image className="rounded-full object-cover" src={img || '/noavatar.png'} alt='' width={50} height={50}/>
         <div className="flex flex-col">
-          <span className="font-medium">Volodymyr</span>
-          <span className="text-xs text-soft">Administrator</span>
+          <span className="font-medium">{username}</span>
+          <span className="text-xs text-soft">{email}</span>
         </div>
       </div>
       <ul>
