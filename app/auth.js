@@ -44,16 +44,14 @@ export const { signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        console.log('jwt user', user)
+        console.log("jwt user", user);
         token.username = user.username;
         token.img = user.img;
       }
-      console.log('token---', token);
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        console.log('jwt token', user)
         session.user.username = token.username;
         session.user.img = token.img;
       }
